@@ -21,18 +21,21 @@ unsigned process_directory( char *theDir )
 
 	/* Open the given directory, if we can. */	
 	dir = opendir( theDir );
-	if( dir == NULL ) {
+	if( dir == NULL ) 
+	{
 		printf( "Error opening %s: %s", theDir, strerror( errno ) );
 		return 0;
 	}
 	
 
 	retval = readdir_r( dir, &entry, &entryPtr );
-	while( entryPtr != NULL ) {
+	while( entryPtr != NULL )
+	{
 		struct stat entryInfo;
 		
 		if( ( strncmp( entry.d_name, ".", PATH_MAX ) == 0 ) ||
-		    ( strncmp( entry.d_name, "..", PATH_MAX ) == 0 ) ) {
+		    ( strncmp( entry.d_name, "..", PATH_MAX ) == 0 ) ) 
+		{
 		    /* Short-circuit the . and .. entries. */
 			retval = readdir_r( dir, &entry, &entryPtr );
 		    continue;
@@ -42,25 +45,32 @@ unsigned process_directory( char *theDir )
 		(void)strncat( pathName, "/", PATH_MAX );
 		(void)strncat( pathName, entry.d_name, PATH_MAX );
 		
-		if( lstat( pathName, &entryInfo ) == 0 ) {
+		if( lstat( pathName, &entryInfo ) == 0 ) 
+		{
 			/* stat() succeeded, let's party */
 			count++;
 			
-			if( S_ISDIR( entryInfo.st_mode ) ) {			/* directory */
+			if( S_ISDIR( entryInfo.st_mode ) ) 
+			{			/* directory */
 				printf( "processing %s/\n", pathName );
 				count += process_directory( pathName );
-			} else if( S_ISREG( entryInfo.st_mode ) ) {	/* regular file */
+			} else if( S_ISREG( entryInfo.st_mode ) ) 
+			{	/* regular file */
 				printf( "\t%s has %lld bytes\n",
 					pathName, (long long)entryInfo.st_size );
-			} else if( S_ISLNK( entryInfo.st_mode ) ) {	/* symbolic link */
+			} else if( S_ISLNK( entryInfo.st_mode ) ) 
+			{	/* symbolic link */
 				char targetName[PATH_MAX + 1];
-				if( readlink( pathName, targetName, PATH_MAX ) != -1 ) {
+				if( readlink( pathName, targetName, PATH_MAX ) != -1 ) 
+				{
 					printf( "\t%s -> %s\n", pathName, targetName );
-				} else {
+				} else 
+				{
 					printf( "\t%s -> (invalid symbolic link!)\n", pathName );
 				}
 			}
-		} else {
+		} else 
+		{
 			printf( "Error statting %s: %s\n", pathName, strerror( errno ) );
 		}
 
@@ -78,7 +88,8 @@ int main( int argc, char **argv )
 	int idx = 0;
 	unsigned count = 0;
 	
-	for( idx = 1; idx < argc; idx++ ) {
+	for( idx = 1; idx < argc; idx++ ) 
+	{
 		count += process_directory( argv[idx] );
 	}
 	
